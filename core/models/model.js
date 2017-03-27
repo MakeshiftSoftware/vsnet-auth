@@ -3,7 +3,6 @@ const ObjectId = require('mongodb').ObjectId;
 
 class Model {
   static json() {
-
   }
 
   static getCollection() {

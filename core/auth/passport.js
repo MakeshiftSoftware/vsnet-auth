@@ -8,12 +8,12 @@ const User          = require('../models/user');
 const jwtOpts = {
   jwtFromRequest: ExtractJwt.fromAuthHeader(),
   secretOrKey: process.env.JWT_SECRET
-};
+}
 
 const localOpts = {
   usernameField: 'username',
   passwordField: 'password'
-};
+}
 
 const localStrategy = new LocalStrategy(localOpts, (username, password, done) => {
   co(function *() {
@@ -23,7 +23,7 @@ const localStrategy = new LocalStrategy(localOpts, (username, password, done) =>
     return match ? done(null, user) : done(null, false);
   })
   .catch(err => done(err));
-});
+})
 
 const jwtStrategy = new JwtStrategy(jwtOpts, (payload, done) => {
   co(function *() {
@@ -32,9 +32,9 @@ const jwtStrategy = new JwtStrategy(jwtOpts, (payload, done) => {
     done(null, user);
   })
   .catch(err => done(err, false));
-});
+})
 
 module.exports = (passport) => {
   passport.use(localStrategy);
   passport.use(jwtStrategy);
-};
+}

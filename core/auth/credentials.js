@@ -9,16 +9,16 @@ exports.encrypt = password => new Promise((resolve, reject) => {
       err ? reject(err) : resolve(hash);
     });
   });
-});
+})
 
 exports.compare = (candidate, password) => new Promise((resolve, reject) => {
   bcrypt.compare(candidate, password, (err, match) => {
     err ? reject(err) : resolve(match);
   });
-});
+})
 
 exports.validateEmail = email => validator.isEmail(email)
 
 exports.normalizeEmail = email => validator.normalizeEmail(email, {
   all_lowercase: true
-});
+})
