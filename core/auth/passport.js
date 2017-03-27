@@ -37,4 +37,4 @@ const jwtStrategy = new JwtStrategy(jwtOpts, (payload, done) => {
 module.exports = (passport) => {
   passport.use(localStrategy);
   passport.use(jwtStrategy);
-}
+};

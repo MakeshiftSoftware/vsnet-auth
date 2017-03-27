@@ -1,5 +1,5 @@
 {
-  "name": "makeshift-node",
+  "name": "vsnet-api",
   "version": "0.0.1",
   "scripts": {
     "start": "nodemon ./core/server.js",
@@ -18,7 +18,6 @@
     "passport": "^0.3.2",
     "passport-jwt": "^2.2.1",
     "passport-local": "^1.0.0",
-    "socket.io": "^1.7.3",
     "validator": "^7.0.0"
   }
 }

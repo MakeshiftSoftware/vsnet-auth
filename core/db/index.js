@@ -2,7 +2,7 @@ const MongoClient = require('mongodb').MongoClient;
 
 const state = {
   db: null
-}
+};
 
 exports.connect = () => new Promise((resolve, reject) => {
   const url = process.env.LOCAL_DB;
@@ -13,8 +13,8 @@ exports.connect = () => new Promise((resolve, reject) => {
     if (err) reject(err);
     state.db = db;
     resolve(db);
-  })
-})
+  });
+});
 
 exports.get = () => state.db
 
@@ -31,8 +31,8 @@ exports.close = () => new Promise((resolve, reject) => {
       state.mode = null;
       resolve(result);
     }
-  })
-})
+  });
+});
 
 exports.getCollections = () => new Promise((resolve, reject) => {
   if (state.db) {
@@ -41,4 +41,4 @@ exports.getCollections = () => new Promise((resolve, reject) => {
       resolve(collections.map(collection => collection.name));
     });
   }
-})
+});

@@ -1,6 +1,7 @@
 const express   = require('express');
 const app       = express();
 const http      = require('http');
+const socketio  = require('socket.io');
 const parser    = require('body-parser');
 const helmet    = require('helmet');
 const logger    = require('morgan');
@@ -8,6 +9,7 @@ const co        = require('co');
 const passport  = require('passport');
 const db        = require('./db');
 const User      = require('./models/user');
+const chat      = require('./chat');
 
 require('dotenv').config();
 
@@ -23,13 +25,14 @@ require('./auth/passport')(passport);
 
 app.use(require('./routes'));
 
+const server = http.createServer(app);
+
 co(function *() {
   const connection = yield db.connect();
   yield User.index();
-  const server = http.createServer(app);
   app.set('port', process.env.PORT);
   server.listen(app.get('port'));
-
+  chat.init();
   console.log('Connected to db \'' + connection.databaseName + '\'\n');
   console.log('Listening...');
 })
