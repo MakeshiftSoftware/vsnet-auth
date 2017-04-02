@@ -31,7 +31,7 @@ co(function *() {
   yield User.index();
   app.set('port', process.env.PORT);
   server.listen(app.get('port'));
-  chat.init();
+  console.log('Listening');
 })
 .catch(err => {
   console.log(err.message);
