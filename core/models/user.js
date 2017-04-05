@@ -68,11 +68,14 @@ class User extends Model {
         
         /**
          * Create user object to be saved in database.
+         * TODO: Add other user fields
          */
         const userObject = {
           email: email,
           username: username,
-          password: encryptedPassword
+          password: encryptedPassword,
+          currentGameId: null,
+          friends: []
         }
 
         /**
