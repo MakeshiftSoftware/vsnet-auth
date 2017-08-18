@@ -1,119 +1,74 @@
-const co          = require('co');
-const credentials = require('../auth/credentials');
-const Model       = require('./model');
+const Sequelize = require('sequelize-cockroachdb')
+const co = require('co');
+const credentials = require('../auth/credentials')
 
-/**
- * The User model
- */
-class User extends Model {
-  /**
-   * Modify user object before returning it.
-   * Only include fields that should be part of
-   * the response body.
-   *
-   * @param {Object} user - The user object
-   */
-  static json(user) {
-    delete user.password;
-    return user;
-  }
+const DataTypes = Sequelize.DataTypes
 
-  /**
-   * Register a new user. Validate fields
-   *
-   * @param {Object} req - The parsed request object
-   */
-  static register(req) {
+
+module.exports = (sequelize) => {
+  const User = sequelize.define('user', {
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
+    currentGameId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'current_game_id'
+    },
+    password: DataTypes.STRING
+  }, {
+    indexes: [
+      { fields: ['username'] }
+    ],
+    timestamps: false,
+    underscored: true
+  })
+
+  User.register = (username, password) => {
     return new Promise((resolve, reject) => {
-      /**
-       * Extract username, email, password from
-       * request body.
-       */
-      let username = req.body.username;
-      let email = req.body.email;
-      let password = req.body.password;
-
-      /**
-       * Return error if any one of username, email,
-       * or password is missing in request body.
-       */
-      if (!username || !email || !password) {
-        reject({
-          message: 'All fields required',
-          code: 400
-        });
-      }
-
-      /**
-       * Validate user's email.
-       * TODO: add more validation for username
-       */
-      if (!credentials.validateEmail(email)) {
-        reject({
-          message: 'Invalid email',
-          code: 400
+      if (!username || !password) {
+        return reject({
+          code: 400,
+          message: 'All fields required'
         })
       }
 
-      /**
-       * Normalize user's email.
-       */
-      email = credentials.normalizeEmail(email);
+      co(function* () {
+        const encryptedPassword = yield credentials.encrypt(password)
 
-      co(function *() {
-        /**
-         * Encrypt user's password.
-         */
-        const encryptedPassword = yield credentials.encrypt(password);
-        
-        /**
-         * Create user object to be saved in database.
-         * TODO: Add other user fields
-         */
-        const userObject = {
-          email: email,
+        const newUser = yield User.create({
           username: username,
           password: encryptedPassword,
-          currentGameId: null,
-          friends: []
-        }
+          currentGameId: null
+        })
 
-        /**
-         * Create user object and resolve promise.
-         */
-        yield User.create(userObject);
-        resolve(userObject);
+        resolve(newUser)
       })
       .catch(err => {
-        /**
-         * Return specific error for unique field violation.
-         * Return generic error for anything else.
-         */
-        if (err.name === 'MongoError' && err.code === 11000) {
+        if (err.name === 'SequelizeUniqueConstraintError') {
           reject({
-            message: 'That username or email is taken',
-            code: 409
-          });
+            code: 409,
+            message: 'That username is already in use'
+          })
         } else {
           reject({
-            message: err.message,
-            code: 400
-          });
+            code: 400,
+            message: 'Something went wrong'
+          })
         }
-      });
-    });
+      })
+    })
   }
+
+  User.toJson = (user) => {
+    return {
+      id: user.id,
+      username: user.username,
+      currentGameId: user.currentGameId
+    }
+  }
+
+  return User
 }
-
-/**
- * Define User specific model attributes.
- */
-User.modelName = 'User';
-User.collection = 'users';
-User.requiredFields = ['email', 'username'];
-User.uniqueFields = ['email', 'username'];
-
-/**
- * Expose User model
- */
-module.exports = User;

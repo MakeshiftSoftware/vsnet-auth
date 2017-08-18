@@ -1,8 +1,15 @@
 {
-  "name": "vsnet-api",
-  "version": "0.0.1",
+  "name": "vsnet-auth",
+  "version": "1.0.0",
   "scripts": {
-    "start": "nodemon ./core/server.js",
+    "dev": "pm2 start ecosystem.config.js -i 0",
+    "prod": "pm2 start ecosystem.config.js --env production -i 0",
+    "restart": "pm2 restart all",
+    "stop": "pm2 stop all",
+    "delete": "pm2 delete all",
+    "list": "pm2 list",
+    "ping": "pm2 ping",
+    "clean": "rm -rf node_modules && npm cache clean && npm i",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -16,9 +23,12 @@
     "jsonwebtoken": "^7.3.0",
     "mongodb": "^2.2.25",
     "morgan": "^1.8.1",
+    "node": "^8.3.0",
     "passport": "^0.3.2",
     "passport-jwt": "^2.2.1",
     "passport-local": "^1.0.0",
+    "sequelize": "^4.5.0",
+    "sequelize-cockroachdb": "^1.0.2",
     "validator": "^7.0.0"
   }
 }

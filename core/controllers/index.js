@@ -1,7 +1,5 @@
-const auth   = require('./auth');
-const social = require('./social');
+const auth = require('./auth')
 
 module.exports = {
-  auth: auth,
-  social: social
+  auth
 }

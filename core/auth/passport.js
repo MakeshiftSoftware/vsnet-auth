@@ -1,9 +1,10 @@
-const JwtStrategy   = require('passport-jwt').Strategy;
-const ExtractJwt    = require('passport-jwt').ExtractJwt;
-const LocalStrategy = require('passport-local');
-const credentials   = require('./credentials');
-const co            = require('co');
-const User          = require('../models/user');
+const co = require('co')
+const JwtStrategy = require('passport-jwt').Strategy
+const ExtractJwt = require('passport-jwt').ExtractJwt
+const LocalStrategy = require('passport-local')
+const credentials = require('./credentials')
+const User = require('../models').User
+
 
 /**
  * Define jwt authentication options.
@@ -22,29 +23,31 @@ const localOpts = {
 }
 
 /**
- * Initialize the local login strategy using username and
+ * Define the local login strategy using username and
  * password. First, find a user with the provided username.
- * If successful, use bcrypt to perform a password comparison
- * against the encrypted password.
+ * If user is found, compare the given password with the
+ * encrypted password using bcrypt.
  *
- * If the passwords match, call the 'done' callback with the 
+ * If the passwords match, call the 'done' callback with the
  * user object. If the validation fails at any point, call the
  * 'done' callback with 'false' in place of the user object.
  */
 const localStrategy = new LocalStrategy(localOpts, (username, password, done) => {
-  co(function *() {
+  co(function* () {
     const user = yield User.findOne({
-      username: username
-    });
+      where: {
+        username: username
+      }
+    })
 
     if (!user) {
-      done(null, false);
+      done(null, false)
     } else {
-      const match = yield credentials.compare(password, user.password);
-      match ? done(null, user) : done(null, false);
+      const match = yield credentials.compare(password, user.password)
+      match ? done(null, user) : done(null, false)
     }
   })
-  .catch(err => done(err));
+  .catch(err => done(err))
 })
 
 /**
@@ -55,21 +58,22 @@ const localStrategy = new LocalStrategy(localOpts, (username, password, done) =>
  * object.
  */
 const jwtStrategy = new JwtStrategy(jwtOpts, (payload, done) => {
-  co(function *() {
-    const user = yield User.findById(payload.id);
+  co(function* () {
+    const user = yield User.findById(payload.id)
+
     if (!user) {
-      done(null, false);
+      done(null, false)
     } else {
-      done(null, user);
+      done(null, user)
     }
   })
-  .catch(err => done(err, false));
+  .catch(err => done(err, false))
 })
 
 /**
  * Expose the passport strategy function.
  */
 module.exports = (passport) => {
-  passport.use(localStrategy);
-  passport.use(jwtStrategy);
+  passport.use(localStrategy)
+  passport.use(jwtStrategy)
 }

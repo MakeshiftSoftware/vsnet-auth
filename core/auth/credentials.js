@@ -1,46 +1,55 @@
-const bcrypt    = require('bcrypt');
-const validator = require('validator');
+const bcrypt = require('bcrypt')
+const validator = require('validator')
+
 
 /**
- * Hash password with added salt using bcrypt.
+ * Hash and salt password using bcrypt
  *
  * @param {String} password - The password to hash
  */
-exports.encrypt = (password) => new Promise((resolve, reject) => {
-  bcrypt.genSalt(10, (err, salt) => {
-    if (err) reject(err);
+exports.encrypt = (password) => {
+  return new Promise((resolve, reject) => {
+    bcrypt.genSalt(10, (err, salt) => {
+      if (err) {
+        reject(err)
+      }
 
-    bcrypt.hash(password, salt, (err, hash) => {
-      err ? reject(err) : resolve(hash);
-    });
-  });
-})
+      bcrypt.hash(password, salt, (err, hash) => {
+        err ? reject(err) : resolve(hash)
+      })
+    })
+  })
+}
 
 /**
- * Compare plain text password to hashed password using bcrypt.
- * If the passwords match, the value match will resolve to 'true'.
+ * Compare plain text password to hashed password using bcrypt
  *
  * @param {String} password - The plain text password
  */
-exports.compare = (candidate, password) => new Promise((resolve, reject) => {
-  bcrypt.compare(candidate, password, (err, match) => {
-    err ? reject(err) : resolve(match);
-  });
-})
+exports.compare = (candidate, password) => {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(candidate, password, (err, match) => {
+      err ? reject(err) : resolve(match)
+    })
+  })
+}
 
 /**
- * Check if given email is a valid email using
- * the validator package.
+ * Check if given string is a valid email
  *
  * @param {String} email - The email to validate
  */
-exports.validateEmail = (email) => validator.isEmail(email)
+exports.validateEmail = (email) => {
+  return validator.isEmail(email)
+}
 
 /**
- * Normalize the given email address.
+ * Normalize an email address
  *
  * @param {String} email - The email to normalize
  */
-exports.normalizeEmail = (email) => validator.normalizeEmail(email, {
-  all_lowercase: true
-})
+exports.normalizeEmail = (email) => {
+  return validator.normalizeEmail(email, {
+    all_lowercase: true
+  })
+}
