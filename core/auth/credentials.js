@@ -1,6 +1,5 @@
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const validator = require('validator')
-
 
 /**
  * Hash and salt password using bcrypt
@@ -15,7 +14,7 @@ exports.encrypt = (password) => {
       }
 
       bcrypt.hash(password, salt, (err, hash) => {
-        err ? reject(err) : resolve(hash)
+        return err ? reject(err) : resolve(hash)
       })
     })
   })
@@ -29,7 +28,7 @@ exports.encrypt = (password) => {
 exports.compare = (candidate, password) => {
   return new Promise((resolve, reject) => {
     bcrypt.compare(candidate, password, (err, match) => {
-      err ? reject(err) : resolve(match)
+      return err ? reject(err) : resolve(match)
     })
   })
 }

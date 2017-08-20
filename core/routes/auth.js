@@ -1,5 +1,4 @@
 const endpoints = require('../controllers').auth
-const requireAuth = require('../auth/middleware').requireAuth
 const requireLogin = require('../auth/middleware').requireLogin
 
 /*

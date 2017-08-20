@@ -1,10 +1,8 @@
-const co = require('co')
 const JwtStrategy = require('passport-jwt').Strategy
 const ExtractJwt = require('passport-jwt').ExtractJwt
 const LocalStrategy = require('passport-local')
 const credentials = require('./credentials')
 const User = require('../models').User
-
 
 /**
  * Define jwt authentication options.
@@ -30,44 +28,39 @@ const localOpts = {
  *
  * If the passwords match, call the 'done' callback with the
  * user object. If the validation fails at any point, call the
- * 'done' callback with 'false' in place of the user object.
+ * 'done' callback with 'false'
  */
 const localStrategy = new LocalStrategy(localOpts, (username, password, done) => {
-  co(function* () {
-    const user = yield User.findOne({
-      where: {
-        username: username
+  User.findOne({ where: { username: username } })
+    .then((user) => {
+      if (!user) {
+        return done(null, false)
       }
-    })
 
-    if (!user) {
-      done(null, false)
-    } else {
-      const match = yield credentials.compare(password, user.password)
-      match ? done(null, user) : done(null, false)
-    }
-  })
-  .catch(err => done(err))
+      credentials.compare(password, user.password)
+        .then((match) => {
+          return match ? done(null, user) : done(null, false)
+        })
+    })
+    .catch((err) => {
+      done(err)
+    })
 })
 
 /**
  * Define the jwt strategy. Decode the jwt and use the
- * resulting id to find the user object. If successful,
+ * payload id to find the user object. If user is found,
  * call the 'done' callback with the user object. Otherwise,
- * call the 'done' callback with 'false' in place of the user
- * object.
+ * call the 'done' callback with 'false'.
  */
 const jwtStrategy = new JwtStrategy(jwtOpts, (payload, done) => {
-  co(function* () {
-    const user = yield User.findById(payload.id)
-
-    if (!user) {
-      done(null, false)
-    } else {
-      done(null, user)
-    }
-  })
-  .catch(err => done(err, false))
+  User.findById(payload.id)
+    .then((user) => {
+      return user ? done(null, user) : done(null, false)
+    })
+    .catch((err) => {
+      done(err, false)
+    })
 })
 
 /**

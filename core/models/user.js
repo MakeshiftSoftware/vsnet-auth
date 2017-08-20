@@ -1,9 +1,7 @@
 const Sequelize = require('sequelize-cockroachdb')
-const co = require('co');
 const credentials = require('../auth/credentials')
 
 const DataTypes = Sequelize.DataTypes
-
 
 module.exports = (sequelize) => {
   const User = sequelize.define('user', {
@@ -35,30 +33,16 @@ module.exports = (sequelize) => {
         })
       }
 
-      co(function* () {
-        const encryptedPassword = yield credentials.encrypt(password)
+      credentials.encrypt(password)
+        .then((encryptedPassword) => {
+          const newUser = User.create({
+            username: username,
+            password: encryptedPassword,
+            currentGameId: null
+          })
 
-        const newUser = yield User.create({
-          username: username,
-          password: encryptedPassword,
-          currentGameId: null
+          resolve(newUser)
         })
-
-        resolve(newUser)
-      })
-      .catch(err => {
-        if (err.name === 'SequelizeUniqueConstraintError') {
-          reject({
-            code: 409,
-            message: 'That username is already in use'
-          })
-        } else {
-          reject({
-            code: 400,
-            message: 'Something went wrong'
-          })
-        }
-      })
     })
   }
 

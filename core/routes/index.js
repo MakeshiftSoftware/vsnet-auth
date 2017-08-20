@@ -10,10 +10,6 @@ const router = express.Router()
  */
 require('./auth')(router)
 
-router.get('/', (req, res) => {
-  res.json({message: 'Welcome!'})
-});
-
 /**
  * Expose router
  */

@@ -1,12 +1,8 @@
 require('dotenv').config()
 
 const http = require('http')
-const co = require('co')
-const db = require('./db')
-const User = require('./models/user')
 const app = require('./app')
 const models = require('./models')
-
 
 /**
  * Get server port
@@ -18,21 +14,18 @@ const PORT = process.env.PORT
  */
 const server = http.createServer(app)
 
-co(function* () {
-  /**
-   * Create database tables for sequelize models
-   */
-  yield models.sequelize.sync()
-
-  /*
-   * Start server
-   */
-  server.listen(PORT, () => {
-    console.log('Listening on', PORT)
-    process.send('ready')
+/**
+ * Create database tables for sequelize models
+ * and then start server
+ */
+models.sequelize.sync()
+  .then(() => {
+    server.listen(PORT, () => {
+      console.log('Listening on', PORT)
+      process.send('ready')
+    })
   })
-})
-.catch(err => {
-  console.log(err.message)
-  process.exit(1)
-})
+  .catch((err) => {
+    console.log(err.message)
+    throw new Error('Failed to start')
+  })
