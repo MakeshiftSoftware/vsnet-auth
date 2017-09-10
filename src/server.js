@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const http = require('http')
 const app = require('./app')
 const models = require('./models')
@@ -9,20 +7,32 @@ const models = require('./models')
  */
 const PORT = process.env.PORT
 
+if (!PORT) {
+  throw new Error('No port specified')
+}
+
 /**
  * Initialize server
  */
 const server = http.createServer(app)
 
 /**
- * Create database tables for sequelize models
- * and then start server
+ * Test connection to database, sync models, and then start server
  */
-models.sequelize.sync()
+Promise.resolve()
+  .then(() => {
+    return models.sequelize.authenticate()
+  })
+  .then(() => {
+    return models.sequelize.sync()
+  })
   .then(() => {
     server.listen(PORT, () => {
       console.log('Listening on', PORT)
-      process.send('ready')
+
+      if (process.send) {
+        process.send('ready')
+      }
     })
   })
   .catch((err) => {

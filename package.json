@@ -2,17 +2,10 @@
   "name": "vsnet-auth",
   "version": "1.0.0",
   "scripts": {
-    "start": "nodemon ./core/server.js",
-    "dev": "pm2 start ecosystem.config.js --no-daemon",
-    "prod": "pm2 start ecosystem.config.js --env production",
-    "restart": "pm2 restart all",
-    "stop": "pm2 stop all",
-    "delete": "pm2 delete all",
-    "list": "pm2 list",
+    "dev": "pm2-docker start --auto-exit ecosystem.config.js",
+    "prod": "pm2-docker start --auto-exit ecosystem.config.js --env production",
     "clean": "rm -rf node_modules && npm cache verify && npm i",
-    "setup": "npm i -g pm2@latest",
-    "db_dev": "cockroach start --insecure --store=/makeshift-data --host=localhost",
-    "lint": "./node_modules/.bin/eslint core/**",
+    "lint": "./node_modules/.bin/eslint src/**",
     "nsp": "nsp check --output summary",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,11 +13,9 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.17.1",
     "compression": "^1.6.2",
-    "dotenv": "^4.0.0",
     "express": "^4.15.2",
     "helmet": "^3.5.0",
     "jsonwebtoken": "^7.3.0",
-    "mongodb": "^2.2.25",
     "morgan": "^1.8.1",
     "passport": "^0.3.2",
     "passport-jwt": "^2.2.1",
@@ -37,7 +28,6 @@
     "eslint": "^4.5.0",
     "eslint-config-airbnb-base": "^11.3.1",
     "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.1.1",
-    "nodemon": "^1.11.0"
+    "eslint-plugin-node": "^5.1.1"
   }
 }

@@ -1,19 +1,18 @@
 module.exports = {
   apps: [
     {
-      name: 'app',
-      script: './core/server.js',
+      name: 'vsnet-auth',
+      script: './src/server.js',
       exec_mode: 'cluster',
       instances: 0,
       wait_ready: true,
-      watch: true,
       env: {
-        PORT: 3000,
-        NODE_ENV: 'development'
+        NODE_ENV: 'development',
+        PORT: 8000
       },
       env_production: {
-        PORT: 80,
-        NODE_ENV: 'production'
+        NODE_ENV: 'production',
+        PORT: 8000
       }
     }
   ]

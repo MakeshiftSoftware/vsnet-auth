@@ -9,7 +9,7 @@ const User = require('../models').User
  */
 const jwtOpts = {
   jwtFromRequest: ExtractJwt.fromAuthHeader(),
-  secretOrKey: process.env.JWT_SECRET
+  secretOrKey: process.env.SECRET
 }
 
 /**
