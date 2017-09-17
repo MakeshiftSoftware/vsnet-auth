@@ -1,3 +1,4 @@
+const co = require('co')
 const token = require('../auth/token')
 const User = require('../models').User
 
@@ -19,16 +20,16 @@ exports.login = (req, res) => {
  * a jwt token for the new user.
  */
 exports.register = (req, res, next) => {
-  const username = req.body.username
-  const password = req.body.password
+  co(function* () {
+    const username = req.body.username
+    const password = req.body.password
 
-  User.register(username, password)
-    .then((user) => {
-      res.status(200).send({
-        code: 200,
-        user: User.toJson(user),
-        token: token(user)
-      })
+    const user = yield User.register(username, password)
+
+    res.status(200).send({
+      code: 200,
+      user: User.toJson(user),
+      token: token(user)
     })
-    .catch(next)
+  }).catch(next)
 }

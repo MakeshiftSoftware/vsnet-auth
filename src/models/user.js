@@ -1,3 +1,4 @@
+const co = require('co')
 const Sequelize = require('sequelize-cockroachdb')
 const credentials = require('../auth/credentials')
 
@@ -33,16 +34,19 @@ module.exports = (sequelize) => {
         })
       }
 
-      credentials.encrypt(password)
-        .then((encryptedPassword) => {
-          const newUser = User.create({
-            username: username,
-            password: encryptedPassword,
-            currentGameId: null
-          })
+      co(function* () {
+        const encryptedPassword = yield credentials.encrypt(password)
 
-          resolve(newUser)
+        const newUser = yield User.create({
+          username: username,
+          password: encryptedPassword,
+          currentGameId: null
         })
+
+        resolve(newUser)
+      }).catch((err) => {
+        reject(err)
+      })
     })
   }
 
