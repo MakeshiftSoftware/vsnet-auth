@@ -4,17 +4,13 @@ const LocalStrategy = require('passport-local')
 const credentials = require('./credentials')
 const User = require('../models').User
 
-/**
- * Define jwt authentication options.
- */
+// Define jwt authentication options.
 const jwtOpts = {
   jwtFromRequest: ExtractJwt.fromAuthHeader(),
   secretOrKey: process.env.SECRET
 }
 
-/**
- * Define local login options.
- */
+// Define local login options.
 const localOpts = {
   usernameField: 'username',
   passwordField: 'password'
@@ -63,9 +59,6 @@ const jwtStrategy = new JwtStrategy(jwtOpts, (payload, done) => {
     })
 })
 
-/**
- * Expose the passport strategy function.
- */
 module.exports = (passport) => {
   passport.use(localStrategy)
   passport.use(jwtStrategy)

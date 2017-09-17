@@ -2,9 +2,9 @@ const bcrypt = require('bcryptjs')
 const validator = require('validator')
 
 /**
- * Hash and salt password using bcrypt
+ * Hash and salt password using bcrypt.
  *
- * @param {String} password - The password to hash
+ * @param {String} password - Plain text password
  */
 exports.encrypt = (password) => {
   return new Promise((resolve, reject) => {
@@ -21,9 +21,9 @@ exports.encrypt = (password) => {
 }
 
 /**
- * Compare plain text password to hashed password using bcrypt
+ * Compare plain text password to hashed password using bcrypt.
  *
- * @param {String} password - The plain text password
+ * @param {String} password - Plain text password
  */
 exports.compare = (candidate, password) => {
   return new Promise((resolve, reject) => {
@@ -34,18 +34,18 @@ exports.compare = (candidate, password) => {
 }
 
 /**
- * Check if given string is a valid email
+ * Check if given string is a valid email.
  *
- * @param {String} email - The email to validate
+ * @param {String} email - Email to validate
  */
 exports.validateEmail = (email) => {
   return validator.isEmail(email)
 }
 
 /**
- * Normalize an email address
+ * Normalize an email address.
  *
- * @param {String} email - The email to normalize
+ * @param {String} email - Email to normalize
  */
 exports.normalizeEmail = (email) => {
   return validator.normalizeEmail(email, {

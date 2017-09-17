@@ -1,16 +1,9 @@
 const express = require('express')
 
-/**
- * Initialize router
- */
+// Initialize router
 const router = express.Router()
 
-/**
- * Inject routes
- */
+// Inject routes
 require('./auth')(router)
 
-/**
- * Expose router
- */
 module.exports = router

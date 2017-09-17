@@ -7,44 +7,30 @@ const compression = require('compression')
 
 const app = express()
 
-/**
- * Use helmet to set response headers
- */
+// Set security headers
 app.use(helmet())
 
-/**
- * Gzip response
- */
+// Gzip response
 app.use(compression())
 
-/**
- * Log requests using morgan
- */
+// Log requests
 app.use(logger('dev'))
 
-/**
- * Parse incoming request bodies
- */
+// Parse incoming request bodies
 app.use(parser.json())
 
 app.use(parser.urlencoded({
   extended: false
 }))
 
-/**
- * Initialize and install passport
- */
+// Initialize and install passport
 app.use(passport.initialize())
 require('./auth/passport')(passport)
 
-/**
- * Inject routes into the app
- */
+// Inject routes into the app
 app.use(require('./routes'))
 
-/**
- * Error handler
- */
+// Error handler
 app.use((err, req, res, next) => {
   if (err.name === 'SequelizeUniqueConstraintError') {
     return res.status(409).send({
@@ -59,7 +45,4 @@ app.use((err, req, res, next) => {
   })
 })
 
-/*
- * Expose app
- */
 module.exports = app

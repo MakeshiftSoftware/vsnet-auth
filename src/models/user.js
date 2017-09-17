@@ -1,6 +1,4 @@
-const co = require('co')
 const Sequelize = require('sequelize-cockroachdb')
-const credentials = require('../auth/credentials')
 
 const DataTypes = Sequelize.DataTypes
 
@@ -24,31 +22,6 @@ module.exports = (sequelize) => {
     timestamps: false,
     underscored: true
   })
-
-  User.register = (username, password) => {
-    return new Promise((resolve, reject) => {
-      if (!username || !password) {
-        return reject({
-          code: 400,
-          message: 'All fields required'
-        })
-      }
-
-      co(function* () {
-        const encryptedPassword = yield credentials.encrypt(password)
-
-        const newUser = yield User.create({
-          username: username,
-          password: encryptedPassword,
-          currentGameId: null
-        })
-
-        resolve(newUser)
-      }).catch((err) => {
-        reject(err)
-      })
-    })
-  }
 
   User.toJson = (user) => {
     return {

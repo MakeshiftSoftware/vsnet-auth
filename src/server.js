@@ -5,7 +5,7 @@ const models = require('./models')
 
 const server = http.createServer(app)
 
-// Test connection to database, sync models, and then start server
+// Test database connection, sync models, and start server
 co(function* () {
   yield models.sequelize.authenticate()
   yield models.sequelize.sync()

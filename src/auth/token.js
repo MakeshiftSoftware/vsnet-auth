@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken')
 
 /**
- * Generate token for user using the user
- * using the user's id.
+ * Generate auth token using the user's id.
+ *
+ * @param {Object} user - User object
  */
 module.exports = (user) => {
   return 'JWT ' + jwt.sign({
