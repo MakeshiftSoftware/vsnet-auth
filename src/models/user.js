@@ -1,35 +1,36 @@
-const Sequelize = require('sequelize-cockroachdb')
+const Sequelize = require('sequelize');
+const { serialize } = require('../response');
 
-const DataTypes = Sequelize.DataTypes
+const DataTypes = Sequelize.DataTypes;
 
 module.exports = (sequelize) => {
   const User = sequelize.define('user', {
+    userId: {
+      field: 'user_id',
+      type: DataTypes.UUID
+    },
+    email: {
+      field: 'email',
+      type: DataTypes.STRING
+    },
     username: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
+      field: 'username',
+      type: DataTypes.STRING
     },
-    currentGameId: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      field: 'current_game_id'
+    password: {
+      field: 'password',
+      type: DataTypes.STRING
     },
-    password: DataTypes.STRING
+    createdAt: {
+      field: 'created_at',
+      type: DataTypes.DATE
+    }
   }, {
-    indexes: [
-      { fields: ['username'] }
-    ],
     timestamps: false,
     underscored: true
-  })
+  });
 
-  User.toJson = (user) => {
-    return {
-      id: user.id,
-      username: user.username,
-      currentGameId: user.currentGameId
-    }
-  }
+  User.json = serialize.user;
 
-  return User
-}
+  return User;
+};

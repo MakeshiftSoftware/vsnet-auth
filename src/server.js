@@ -1,24 +1,28 @@
-const http = require('http')
-const co = require('co')
-const app = require('./app')
-const models = require('./models')
+const http = require('http');
+const app = require('./app');
+const models = require('./models');
 
-const server = http.createServer(app)
+const start = async () => {
+  try {
+    const server = http.createServer(app);
+    await models.sequelize.authenticate();
 
-// Test database connection, sync models, and start server
-co(function* () {
-  yield models.sequelize.authenticate()
-  yield models.sequelize.sync()
+    server.listen(process.env.PORT, () => {
+      process.on('SIGINT', () => {
+        // todo: cleanup
+        // process.exit(err ? 1 : 0);
+        process.exit(0); // eslint-disable-line
+      });
 
-  server.listen(process.env.PORT, () => {
-    console.log('Listening on', process.env.PORT)
+      if (process.send) {
+        process.send('ready');
+      }
 
-    if (process.send) {
-      process.send('ready')
-    }
-  })
-}).catch((err) => {
-  /* eslint-disable */
-  console.log(err.message)
-  throw new Error('Failed to start')
-})
+      console.log('vsnet-auth: listening on', process.env.PORT); // eslint-disable-line
+    });
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+start();

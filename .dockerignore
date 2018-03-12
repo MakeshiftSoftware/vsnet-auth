@@ -1,8 +1,11 @@
 node_modules/
 *.log
-.git
-.gitattributes
-.env
-.eslintrc
+.dockerignore
 .editorconfig
+.eslintrc
+.gitattributes
+.gitignore
+.sequelizerc
+Dockerfile.dev
+package-lock.json
 .DS_Store

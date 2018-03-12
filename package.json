@@ -1,37 +1,42 @@
 {
   "name": "vsnet-auth",
+  "description": "vsnet auth",
   "version": "1.0.0",
+  "author": "taapesh",
+  "private": true,
+  "repository": "https://gitlab.com/MakeshiftSoftware/vsnet-auth",
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "scripts": {
-    "dev": "pm2-docker start --auto-exit ecosystem.config.js",
-    "prod": "pm2-docker start --auto-exit ecosystem.config.js --env production",
-    "clean": "rm -rf node_modules && npm cache verify && npm i",
+    "dev": "pm2-runtime start --watch ecosystem.config.js",
+    "prod": "pm2-runtime start --env production ecosystem.config.js",
     "lint": "./node_modules/.bin/eslint src/**",
+    "clean": "rm -rf node_modules && yarn cache clean && yarn",
     "nsp": "nsp check --output summary",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.17.1",
-    "co": "^4.6.0",
-    "compression": "^1.6.2",
-    "express": "^4.15.2",
-    "helmet": "^3.5.0",
-    "jsonwebtoken": "^7.3.0",
-    "morgan": "^1.8.1",
-    "passport": "^0.3.2",
-    "passport-jwt": "^2.2.1",
+    "body-parser": "^1.18.2",
+    "compression": "^1.7.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "helmet": "^3.12.0",
+    "jsonwebtoken": "^8.2.0",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^3.0.1",
     "passport-local": "^1.0.0",
-    "sequelize": "^4.5.0",
-    "sequelize-cockroachdb": "^1.0.2",
-    "validator": "^7.0.0"
+    "pg": "^7.4.1",
+    "sequelize": "^4.35.2"
   },
   "devDependencies": {
     "eslint": "^4.7.0",
     "eslint-config-airbnb-base": "^12.0.0",
     "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.1.1"
+    "eslint-plugin-node": "^5.1.1",
+    "nsp": "^3.2.1",
+    "sequelize-cli": "^4.0.0"
   }
 }

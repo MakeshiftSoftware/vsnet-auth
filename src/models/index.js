@@ -1,19 +1,23 @@
-const Sequelize = require('sequelize-cockroachdb')
+const Sequelize = require('sequelize');
 
-const DB_ADDR = process.env.NODE_ENV === 'production'
-  ? process.env.DB_PROD
-  : process.env.DB_DEV
+let connectionUrl;
 
-const sequelize = new Sequelize(DB_ADDR, {
-  dialect: 'postgres',
-  logging: false
-})
-
-if (!Sequelize.supportsCockroachDB) {
-  throw new Error('CockroachDB dialect for Sequelize not installed')
+if (process.env.NODE_ENV === 'production') {
+  connectionUrl = process.env.DB_PROD;
+} else if (process.env.NODE_ENV === 'development') {
+  connectionUrl = process.env.DB_DEV;
 }
 
-exports.User = require('./user')(sequelize)
+const sequelize = new Sequelize(connectionUrl, {
+  dialect: 'postgres',
+  operatorsAliases: false,
+  logging: false
+});
 
-exports.sequelize = sequelize
-exports.Sequelize = Sequelize
+const User = require('./user')(sequelize);
+
+module.exports = {
+  sequelize,
+  Sequelize,
+  User
+};

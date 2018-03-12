@@ -1,9 +1,9 @@
-const express = require('express')
+const express = require('express');
 
 // Initialize router
-const router = express.Router()
+const router = express.Router();
 
 // Inject routes
-require('./auth')(router)
+require('./auth')(router);
 
-module.exports = router
+module.exports = router;

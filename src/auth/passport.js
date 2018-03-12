@@ -1,65 +1,46 @@
-const JwtStrategy = require('passport-jwt').Strategy
-const ExtractJwt = require('passport-jwt').ExtractJwt
-const LocalStrategy = require('passport-local')
-const credentials = require('./credentials')
-const User = require('../models').User
+const { ExtractJwt, Strategy } = require('passport-jwt');
+const LocalStrategy = require('passport-local');
+const credentials = require('./credentials');
+const { User } = require('../models');
 
-// Define jwt authentication options.
+// Define jwt authentication options
 const jwtOpts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeader(),
-  secretOrKey: process.env.SECRET
-}
+  jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
+  secretOrKey: process.env.APP_SECRET
+};
 
-// Define local login options.
+// Define local login options
 const localOpts = {
   usernameField: 'username',
   passwordField: 'password'
-}
+};
 
-/**
- * Define the local login strategy using username and
- * password. First, find a user with the provided username.
- * If user is found, compare the given password with the
- * encrypted password using bcrypt.
- *
- * If the passwords match, call the 'done' callback with the
- * user object. If the validation fails at any point, call the
- * 'done' callback with 'false'
- */
-const localStrategy = new LocalStrategy(localOpts, (username, password, done) => {
-  User.findOne({ where: { username: username } })
-    .then((user) => {
-      if (!user) {
-        return done(null, false)
-      }
+// Initialize local login strategy
+const localStrategy = new LocalStrategy(localOpts, async (username, password, done) => {
+  const user = await User.findOne({
+    where: {
+      username
+    }
+  });
 
-      credentials.compare(password, user.password)
-        .then((match) => {
-          return match ? done(null, user) : done(null, false)
-        })
-    })
-    .catch((err) => {
-      done(err)
-    })
-})
+  if (!user) {
+    return done(null, false);
+  }
 
-/**
- * Define the jwt strategy. Decode the jwt and use the
- * payload id to find the user object. If user is found,
- * call the 'done' callback with the user object. Otherwise,
- * call the 'done' callback with 'false'.
- */
-const jwtStrategy = new JwtStrategy(jwtOpts, (payload, done) => {
-  User.findById(payload.id)
-    .then((user) => {
-      return user ? done(null, user) : done(null, false)
-    })
-    .catch((err) => {
-      done(err, false)
-    })
-})
+  const match = await credentials.compare(password, user.password);
+  return match ? done(null, user) : done(null, false);
+});
+
+// Initialize jwt authentication strategy
+const jwtStrategy = new Strategy(jwtOpts, async (payload, done) => {
+  const user = await User.findById(payload.id, {
+    attributes: { exclude: ['password'] }
+  });
+
+  return user ? done(null, user) : done(null, false);
+});
 
 module.exports = (passport) => {
-  passport.use(localStrategy)
-  passport.use(jwtStrategy)
-}
+  passport.use(localStrategy);
+  passport.use(jwtStrategy);
+};
