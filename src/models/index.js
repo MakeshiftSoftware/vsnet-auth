@@ -1,14 +1,6 @@
 const Sequelize = require('sequelize');
 
-let connectionUrl;
-
-if (process.env.NODE_ENV === 'production') {
-  connectionUrl = process.env.DB_PROD;
-} else if (process.env.NODE_ENV === 'development') {
-  connectionUrl = process.env.DB_DEV;
-}
-
-const sequelize = new Sequelize(connectionUrl, {
+const sequelize = new Sequelize(process.env.DB, {
   dialect: 'postgres',
   operatorsAliases: false,
   logging: false
