@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const { serialize } = require('../response');
+const serialize = require('./serialize');
 
 const DataTypes = Sequelize.DataTypes;
 

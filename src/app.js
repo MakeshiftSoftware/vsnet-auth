@@ -3,8 +3,13 @@ const cors = require('cors');
 const passport = require('passport');
 const helmet = require('helmet');
 const parser = require('body-parser');
-const logger = require('morgan');
+const morgan = require('morgan');
 const compression = require('compression');
+
+const {
+  requireLogin,
+  login
+} = require('./middleware');
 
 const app = express();
 
@@ -18,7 +23,19 @@ app.use(helmet());
 app.use(compression());
 
 // Log requests
-app.use(logger('dev'));
+app.use(morgan(process.env.HTTP_LOG_LEVEL, {
+  skip: function (req, res) {
+    return res.statusCode < 400;
+  },
+  stream: process.stderr
+}));
+
+app.use(morgan(process.env.HTTP_LOG_LEVEL, {
+  skip: function (req, res) {
+    return res.statusCode >= 400;
+  },
+  stream: process.stdout
+}));
 
 // Parse incoming requests
 app.use(parser.json());
@@ -31,8 +48,8 @@ app.use(parser.urlencoded({
 app.use(passport.initialize());
 require('./auth/passport')(passport);
 
-// Inject routes
-app.use(require('./routes'));
+// Define login route
+app.post('/api/login', requireLogin, login);
 
 // Global error handler
 app.use((err, req, res, next) => {

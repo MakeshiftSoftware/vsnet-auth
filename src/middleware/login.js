@@ -1,11 +1,11 @@
-const { response } = require('./common');
 const { User } = require('../models');
 const token = require('../auth/token');
 
-module.exports = response({
-  model: User,
-  instance: 'user',
-  append: (req) => ({
+const login = (req, res) => {
+  res.status(200).send({
+    ...User.json(req.user),
     token: token(req.user)
-  })
-});
+  });
+};
+
+module.exports = login;

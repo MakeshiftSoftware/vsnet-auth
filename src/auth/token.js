@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 
+const secret = process.env.APP_SECRET;
+
 /**
  * Generate auth token.
  *
@@ -8,7 +10,7 @@ const jwt = require('jsonwebtoken');
 module.exports = (user) => {
   const token = jwt.sign({
     id: user.id
-  }, process.env.APP_SECRET);
+  }, secret);
 
   return `JWT ${token}`;
 };

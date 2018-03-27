@@ -3,10 +3,12 @@ const LocalStrategy = require('passport-local');
 const credentials = require('./credentials');
 const { User } = require('../models');
 
+const secret = process.env.APP_SECRET;
+
 // Define jwt authentication options
 const jwtOpts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
-  secretOrKey: process.env.APP_SECRET
+  secretOrKey: secret
 };
 
 // Define local login options

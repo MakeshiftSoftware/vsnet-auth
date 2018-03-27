@@ -1,6 +1,8 @@
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize(process.env.DB, {
+const connectionUrl = process.env.DB_CONNECTION_URL;
+
+const sequelize = new Sequelize(connectionUrl, {
   dialect: 'postgres',
   operatorsAliases: false,
   logging: false

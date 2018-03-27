@@ -28,7 +28,8 @@
     "passport-jwt": "^3.0.1",
     "passport-local": "^1.0.0",
     "pg": "^7.4.1",
-    "sequelize": "^4.35.2"
+    "sequelize": "^4.35.2",
+    "winston": "^2.4.1"
   },
   "devDependencies": {
     "eslint": "^4.7.0",

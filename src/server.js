@@ -4,6 +4,7 @@ const cluster = require('cluster');
 const http = require('http');
 const app = require('./app');
 const models = require('./models');
+const log = require('./logger');
 
 if (cluster.isMaster) {
   for (let i = 0; i < os.cpus().length; ++i) {
@@ -12,17 +13,20 @@ if (cluster.isMaster) {
 
   cluster.on('exit', (worker) => {
     if (!worker.exitedAfterDisconnect) {
-      console.log('[Error][auth] Worker has died', worker.process.pid);
+      log.error('[auth] Worker has died: ' + worker.process.pid);
+
       cluster.fork();
     }
   });
 } else {
   const start = async () => {
     try {
+      const port = process.env.PORT;
+
       const server = http.createServer(app);
       await models.sequelize.authenticate();
 
-      server.listen(process.env.PORT, () => {
+      server.listen(port, () => {
         process.on('SIGINT', () => {
           // todo: cleanup then
           // process.exit(err ? 1 : 0);
@@ -35,11 +39,7 @@ if (cluster.isMaster) {
           process.exit(0);
         });
 
-        if (process.send) {
-          process.send('ready');
-        }
-
-        console.log('vsnet-auth: listening on', process.env.PORT);
+        log.info('[auth] Server listening on port ' + port);
       });
     } catch (err) {
       throw new Error(err);
