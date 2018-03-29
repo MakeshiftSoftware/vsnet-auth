@@ -51,6 +51,12 @@ require('./auth/passport')(passport);
 // Define login route
 app.post('/api/login', requireLogin, login);
 
+// Healthcheck route
+app.get('/healthz', async (req, res) => {
+  // check application health
+  res.sendStatus(200);
+});
+
 // Global error handler
 app.use((err, req, res, next) => {
   res.status(500).send({

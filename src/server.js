@@ -24,27 +24,34 @@ if (cluster.isMaster) {
       const port = process.env.PORT;
 
       const server = http.createServer(app);
+
       await models.sequelize.authenticate();
 
       server.listen(port, () => {
-        process.on('SIGINT', () => {
-          // todo: cleanup then
-          // process.exit(err ? 1 : 0);
-          process.exit(0);
-        });
+        process.on('SIGINT', stop);
 
-        process.on('SIGTERM', () => {
-          // todo: cleanup then
-          // process.exit(err ? 1 : 0);
-          process.exit(0);
-        });
+        process.on('SIGTERM', stop);
 
         log.info('[auth] Server listening on port ' + port);
       });
     } catch (err) {
-      throw new Error(err);
+      throw err;
     }
   };
 
   start();
+}
+
+async function stop() {
+  try {
+    log.info('[auth] Stopping server gracefully');
+
+    await models.sequelize.close();
+
+    process.exit(0);
+  } catch (err) {
+    log.error('[auth] Disconnect from database failed: ' + err.message);
+
+    process.exit(1);
+  }
 }
